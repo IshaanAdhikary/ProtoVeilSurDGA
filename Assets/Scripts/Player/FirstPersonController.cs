@@ -1,5 +1,4 @@
 using UnityEngine;
-using UnityEngine.InputSystem;
 
 [RequireComponent(typeof(CharacterController))]
 [RequireComponent(typeof(PlayerStateController))]
@@ -9,7 +8,8 @@ public class FirstPersonController : MonoBehaviour
     [SerializeField] private float standSpeed = 5f;
     [SerializeField] private float crouchSpeed = 2.5f;
     [SerializeField] private float sprintSpeed = 8f;
-    [SerializeField] private float gravity = -19.62f; // 2x default, snappier
+     // 2x normal gravity, snappier feel
+    [SerializeField] private float gravity = -19.62f;
 
     [Header("View")]
     [SerializeField] private float mouseSens = 0.15f;
@@ -20,17 +20,13 @@ public class FirstPersonController : MonoBehaviour
     [SerializeField] private float standHeight = 2f;
     [SerializeField] private float crouchHeight = 1f;
     [SerializeField] private float crouchTransitionSpeed = 15f;
+     // What objects block uncrouching
     [SerializeField] private LayerMask ceilingCheckMask = ~0;
 
     private Camera playerCamera;
     private CharacterController controller;
     private PlayerControls controls;
     private PlayerStateController playerStateController;
-
-    private Vector2 moveInput;
-    private Vector2 lookInput;
-    private bool crouchHeld;
-    private bool sprintHeld;
 
     private float verticalLookClamped;
     private float verticalVelocity;
@@ -61,43 +57,14 @@ public class FirstPersonController : MonoBehaviour
     {
         controls.PlayerMovement.Enable();
 
-        controls.PlayerMovement.Move.performed += OnMove;
-        controls.PlayerMovement.Move.canceled += OnMove;
-
-        controls.PlayerMovement.Look.performed += OnLook;
-        controls.PlayerMovement.Look.canceled += OnLook;
-
-        controls.PlayerMovement.Crouch.performed += OnCrouch;
-        controls.PlayerMovement.Crouch.canceled += OnCrouch;
-
-        controls.PlayerMovement.Sprint.performed += OnSprint;
-        controls.PlayerMovement.Sprint.canceled += OnSprint;
-
         Cursor.lockState = CursorLockMode.Locked;
         Cursor.visible = false;
     }
 
     private void OnDisable()
     {
-        controls.PlayerMovement.Move.performed -= OnMove;
-        controls.PlayerMovement.Move.canceled -= OnMove;
-
-        controls.PlayerMovement.Look.performed -= OnLook;
-        controls.PlayerMovement.Look.canceled -= OnLook;
-
-        controls.PlayerMovement.Crouch.performed -= OnCrouch;
-        controls.PlayerMovement.Crouch.canceled -= OnCrouch;
-
-        controls.PlayerMovement.Sprint.performed -= OnSprint;
-        controls.PlayerMovement.Sprint.canceled -= OnSprint;
-
         controls.PlayerMovement.Disable();
     }
-
-    private void OnMove(InputAction.CallbackContext ctx) => moveInput = ctx.ReadValue<Vector2>();
-    private void OnLook(InputAction.CallbackContext ctx) => lookInput = ctx.ReadValue<Vector2>();
-    private void OnCrouch(InputAction.CallbackContext ctx) => crouchHeld = ctx.ReadValueAsButton();
-    private void OnSprint(InputAction.CallbackContext ctx) => sprintHeld = ctx.ReadValueAsButton();
 
     private void Update()
     {
@@ -108,16 +75,20 @@ public class FirstPersonController : MonoBehaviour
 
     private void HandleMove()
     {
+        bool sprintHeld = controls.PlayerMovement.Sprint.IsPressed();
+
         // Crouch takes precedence over sprinting
         float speed = sprintHeld ? sprintSpeed : standSpeed;
         speed = playerStateController.GetCrouching() ? crouchSpeed : speed;
 
+        Vector2 moveInput = controls.PlayerMovement.Move.ReadValue<Vector2>();
         Vector3 move = transform.right * moveInput.x + transform.forward * moveInput.y;
         move *= speed;
 
         if (controller.isGrounded && verticalVelocity < 0f)
         {
-            verticalVelocity = -2f; // small downward force to keep grounded
+            // Small downward force to keep grounded
+            verticalVelocity = -2f;
         }
         verticalVelocity += gravity * Time.deltaTime;
 
@@ -127,6 +98,7 @@ public class FirstPersonController : MonoBehaviour
 
     private void HandleLook()
     {
+        Vector2 lookInput = controls.PlayerMovement.Look.ReadValue<Vector2>();
         float horizontalLook = lookInput.x * mouseSens;
         float verticalLook = lookInput.y * mouseSens;
 
@@ -141,6 +113,7 @@ public class FirstPersonController : MonoBehaviour
 
     private void HandleCrouch()
     {
+        bool crouchHeld = controls.PlayerMovement.Crouch.IsPressed();
         float targetHeight = crouchHeld ? crouchHeight : standHeight;
 
         // Don't let the player stand up into a low ceiling

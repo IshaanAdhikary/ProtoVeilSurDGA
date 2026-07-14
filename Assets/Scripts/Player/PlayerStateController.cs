@@ -3,7 +3,7 @@ using UnityEngine.InputSystem;
 
 public class PlayerStateController : MonoBehaviour
 {
-    [SerializeField] private GameObject notebook;
+    [SerializeField] private GameObject notebookMenu;
 
     private PlayerControls controls;
     private FirstPersonController firstPersonController;
@@ -15,6 +15,11 @@ public class PlayerStateController : MonoBehaviour
     {
         controls = new PlayerControls();
         firstPersonController = GetComponent<FirstPersonController>();
+    }
+
+    private void Start()
+    {
+        notebookMenu.SetActive(false);
     }
 
     private void OnEnable()
@@ -43,6 +48,11 @@ public class PlayerStateController : MonoBehaviour
 
     private void ToggleNotebook(InputAction.CallbackContext ctx)
     {
+        notebookOpen = !notebookOpen;
+        notebookMenu.SetActive(notebookOpen);
+        firstPersonController.enabled = !notebookOpen;
 
+        Cursor.lockState = notebookOpen ? CursorLockMode.None : CursorLockMode.Locked;
+        Cursor.visible = notebookOpen;
     }
 }
