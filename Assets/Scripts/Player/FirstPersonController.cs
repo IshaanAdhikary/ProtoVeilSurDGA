@@ -1,0 +1,178 @@
+using UnityEngine;
+using UnityEngine.InputSystem;
+
+[RequireComponent(typeof(CharacterController))]
+[RequireComponent(typeof(PlayerStateController))]
+public class FirstPersonController : MonoBehaviour
+{
+    [Header("Movement")]
+    [SerializeField] private float standSpeed = 5f;
+    [SerializeField] private float crouchSpeed = 2.5f;
+    [SerializeField] private float sprintSpeed = 8f;
+    [SerializeField] private float gravity = -19.62f; // 2x default, snappier
+
+    [Header("View")]
+    [SerializeField] private float mouseSens = 0.15f;
+    [SerializeField] private float minLookDown = -85f;
+    [SerializeField] private float maxLookUp = 85f;
+
+    [Header("Crouch")]
+    [SerializeField] private float standHeight = 2f;
+    [SerializeField] private float crouchHeight = 1f;
+    [SerializeField] private float crouchTransitionSpeed = 15f;
+    [SerializeField] private LayerMask ceilingCheckMask = ~0;
+
+    private Camera playerCamera;
+    private CharacterController controller;
+    private PlayerControls controls;
+    private PlayerStateController playerStateController;
+
+    private Vector2 moveInput;
+    private Vector2 lookInput;
+    private bool crouchHeld;
+    private bool sprintHeld;
+
+    private float verticalLookClamped;
+    private float verticalVelocity;
+    private float currentHeight;
+    private Vector3 cameraStandLocalPos;
+    private Vector3 cameraCrouchLocalPos;
+
+    private void Awake()
+    {
+        controller = GetComponent<CharacterController>();
+        controls = new PlayerControls();
+        playerStateController = GetComponent<PlayerStateController>();
+
+        currentHeight = standHeight;
+        controller.height = standHeight;
+
+        cameraStandLocalPos = new Vector3(0f, standHeight * 0.5f, 0f);
+        cameraCrouchLocalPos = new Vector3(0f, crouchHeight * 0.5f, 0f);
+
+        playerCamera = Camera.main;
+        if (playerCamera != null)
+        {
+            playerCamera.transform.localPosition = cameraStandLocalPos;
+        }
+    }
+
+    private void OnEnable()
+    {
+        controls.PlayerMovement.Enable();
+
+        controls.PlayerMovement.Move.performed += OnMove;
+        controls.PlayerMovement.Move.canceled += OnMove;
+
+        controls.PlayerMovement.Look.performed += OnLook;
+        controls.PlayerMovement.Look.canceled += OnLook;
+
+        controls.PlayerMovement.Crouch.performed += OnCrouch;
+        controls.PlayerMovement.Crouch.canceled += OnCrouch;
+
+        controls.PlayerMovement.Sprint.performed += OnSprint;
+        controls.PlayerMovement.Sprint.canceled += OnSprint;
+
+        Cursor.lockState = CursorLockMode.Locked;
+        Cursor.visible = false;
+    }
+
+    private void OnDisable()
+    {
+        controls.PlayerMovement.Move.performed -= OnMove;
+        controls.PlayerMovement.Move.canceled -= OnMove;
+
+        controls.PlayerMovement.Look.performed -= OnLook;
+        controls.PlayerMovement.Look.canceled -= OnLook;
+
+        controls.PlayerMovement.Crouch.performed -= OnCrouch;
+        controls.PlayerMovement.Crouch.canceled -= OnCrouch;
+
+        controls.PlayerMovement.Sprint.performed -= OnSprint;
+        controls.PlayerMovement.Sprint.canceled -= OnSprint;
+
+        controls.PlayerMovement.Disable();
+    }
+
+    private void OnMove(InputAction.CallbackContext ctx) => moveInput = ctx.ReadValue<Vector2>();
+    private void OnLook(InputAction.CallbackContext ctx) => lookInput = ctx.ReadValue<Vector2>();
+    private void OnCrouch(InputAction.CallbackContext ctx) => crouchHeld = ctx.ReadValueAsButton();
+    private void OnSprint(InputAction.CallbackContext ctx) => sprintHeld = ctx.ReadValueAsButton();
+
+    private void Update()
+    {
+        HandleMove();
+        HandleLook();
+        HandleCrouch();
+    }
+
+    private void HandleMove()
+    {
+        // Crouch takes precedence over sprinting
+        float speed = sprintHeld ? sprintSpeed : standSpeed;
+        speed = playerStateController.GetCrouching() ? crouchSpeed : speed;
+
+        Vector3 move = transform.right * moveInput.x + transform.forward * moveInput.y;
+        move *= speed;
+
+        if (controller.isGrounded && verticalVelocity < 0f)
+        {
+            verticalVelocity = -2f; // small downward force to keep grounded
+        }
+        verticalVelocity += gravity * Time.deltaTime;
+
+        move.y = verticalVelocity;
+        controller.Move(move * Time.deltaTime);
+    }
+
+    private void HandleLook()
+    {
+        float horizontalLook = lookInput.x * mouseSens;
+        float verticalLook = lookInput.y * mouseSens;
+
+        transform.Rotate(Vector3.up * horizontalLook);
+
+        verticalLookClamped = Mathf.Clamp(verticalLookClamped - verticalLook, minLookDown, maxLookUp);
+        if (playerCamera != null)
+        {
+            playerCamera.transform.localEulerAngles = new Vector3(verticalLookClamped, 0f, 0f);
+        }
+    }
+
+    private void HandleCrouch()
+    {
+        float targetHeight = crouchHeld ? crouchHeight : standHeight;
+
+        // Don't let the player stand up into a low ceiling
+        if (!crouchHeld && targetHeight > currentHeight)
+        {
+            float checkDistance = standHeight - currentHeight;
+            Vector3 origin = transform.position + Vector3.up * currentHeight;
+            if (Physics.Raycast(origin, Vector3.up, checkDistance, ceilingCheckMask))
+            {
+                targetHeight = currentHeight; // blocked, stay crouched
+            }
+        }
+
+        currentHeight = Mathf.Lerp(currentHeight, targetHeight, crouchTransitionSpeed * Time.deltaTime);
+
+        controller.height = currentHeight;
+        controller.center = new Vector3(0f, currentHeight * 0.5f, 0f);
+
+        bool actuallyCrouching = currentHeight < standHeight - 0.01;
+        playerStateController.SetCrouching(actuallyCrouching);
+
+        if (playerCamera != null)
+        {
+            Vector3 targetCamPos = Vector3.Lerp(cameraCrouchLocalPos, cameraStandLocalPos,
+                (currentHeight - crouchHeight) / (standHeight - crouchHeight));
+            playerCamera.transform.localPosition = Vector3.Lerp(
+                playerCamera.transform.localPosition, targetCamPos, crouchTransitionSpeed * Time.deltaTime);
+        }
+    }
+
+    private void OnDestroy()
+    {
+        controls?.Dispose();
+    }
+}
