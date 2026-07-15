@@ -73,6 +73,10 @@ public class FirstPersonController : MonoBehaviour
         HandleCrouch();
     }
 
+    /// <summary>
+    /// Move the player depending on the movement input at either crouch, normal,
+    /// or sprint speed. Uses character controller component to move.
+    /// </summary>
     private void HandleMove()
     {
         bool sprintHeld = controls.PlayerMovement.Sprint.IsPressed();
@@ -96,6 +100,10 @@ public class FirstPersonController : MonoBehaviour
         controller.Move(move * Time.deltaTime);
     }
 
+    /// <summary>
+    /// Move the camera depending on the look input. Rotates the player left and right
+    /// but not up and down, and clamps up and down minimum and maximum.
+    /// </summary>
     private void HandleLook()
     {
         Vector2 lookInput = controls.PlayerMovement.Look.ReadValue<Vector2>();
@@ -111,6 +119,10 @@ public class FirstPersonController : MonoBehaviour
         }
     }
 
+    /// <summary>
+    /// Handles crouching motion. The player can only stop crouching if the space
+    /// above them is unblocked. Moves camera and changes controller height.
+    /// </summary>
     private void HandleCrouch()
     {
         bool crouchHeld = controls.PlayerMovement.Crouch.IsPressed();

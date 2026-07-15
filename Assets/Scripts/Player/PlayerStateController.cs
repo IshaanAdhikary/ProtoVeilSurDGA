@@ -46,6 +46,10 @@ public class PlayerStateController : MonoBehaviour
         isCrouching = value;
     }
 
+    /// <summary>
+    /// When toggle notebook button is pressed, either open or close the notebook
+    /// depending on if it is already open.
+    /// </summary>
     private void ToggleNotebook(InputAction.CallbackContext ctx)
     {
         notebookOpen = !notebookOpen;
