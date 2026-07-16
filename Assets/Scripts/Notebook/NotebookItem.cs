@@ -1,11 +1,19 @@
 using UnityEngine;
 using UnityEngine.EventSystems;
 
-public class Draggable : MonoBehaviour, IBeginDragHandler, IDragHandler, IEndDragHandler
+/// <summary>
+/// Base class for draggable notebook items. Handles drag input and clamps the
+/// item's position within assigned bounds. Concrete note types (e.g.
+/// TextNote, QuestionNote) inherit from this to add their own content.
+/// </summary>
+public abstract class NotebookItem : MonoBehaviour, IBeginDragHandler, IDragHandler, IEndDragHandler
 {
     [SerializeField] private RectTransform bounds;
+    [SerializeField] private StringPin pin;
     private RectTransform rect;
     private Vector2 mousePosition;
+
+    public StringPin Pin => pin;
 
     private void Awake()
     {

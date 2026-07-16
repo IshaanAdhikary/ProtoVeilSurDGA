@@ -1,6 +1,10 @@
 using UnityEngine;
 using UnityEngine.InputSystem;
 
+/// <summary>
+/// Tracks player state shared across systems (crouching, notebook open/closed)
+/// and player functions like opening notebook.
+/// </summary>
 public class PlayerStateController : MonoBehaviour
 {
     [SerializeField] private GameObject notebookMenu;

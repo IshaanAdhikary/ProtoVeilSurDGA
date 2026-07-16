@@ -1,5 +1,8 @@
 using UnityEngine;
 
+/// <summary>
+/// Drives first-person control through CharacterController
+/// </summary>
 [RequireComponent(typeof(CharacterController))]
 [RequireComponent(typeof(PlayerStateController))]
 public class FirstPersonController : MonoBehaviour
