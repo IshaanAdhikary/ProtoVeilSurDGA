@@ -17,6 +17,12 @@ public class PhotoNote : NotebookItem
         return subjectIds.Contains(subjectId);
     }
 
+    public void AddSubject(string subjectId) {
+        if (!subjectIds.Contains(subjectId)) {
+            subjectIds.Add(subjectId);
+        }
+    }
+
     public void LoadImage(Texture2D content)
     {
         displayImage.color = Color.white;
