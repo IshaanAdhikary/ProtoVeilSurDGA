@@ -52,4 +52,9 @@ public abstract class NotebookItem : MonoBehaviour, IBeginDragHandler, IDragHand
 
         return toClamp;
     }
+
+    public void setBounds(RectTransform newBounds)
+    {
+        bounds = newBounds;
+    }
 }

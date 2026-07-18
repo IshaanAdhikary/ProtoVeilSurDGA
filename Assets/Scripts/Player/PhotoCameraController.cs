@@ -10,6 +10,7 @@ using UnityEngine.UI;
 public class PhotoCameraController : MonoBehaviour
 {
     [SerializeField] private Canvas cameraUI;
+    [SerializeField] private GameObject photographPrefab;
     private Camera targetCamera;
     [SerializeField] private float normalFOV = 60f;
     [SerializeField] private float zoomedFOV = 30f;
@@ -17,6 +18,7 @@ public class PhotoCameraController : MonoBehaviour
 
     private PlayerControls controls;
     private PlayerStateController playerStateController;
+    private GameObject notebookMenu;
     private float targetFOV;
 
     // TODO: remove this debug image
@@ -26,6 +28,7 @@ public class PhotoCameraController : MonoBehaviour
     {
         controls = new PlayerControls();
         playerStateController = GetComponent<PlayerStateController>();
+        notebookMenu = playerStateController.GetNotebookMenu();
 
         if (targetCamera == null)
         {
@@ -94,6 +97,11 @@ public class PhotoCameraController : MonoBehaviour
         RenderTexture captureRT = RenderTexture.GetTemporary(Screen.width, Screen.height, 24);
         Texture2D photo = CapturePhoto(captureRT);
         RenderTexture.ReleaseTemporary(captureRT);
+
+        GameObject photograph = Instantiate(photographPrefab, notebookMenu.transform);
+        PhotoNote photoNote = photograph.GetComponent<PhotoNote>();
+        photoNote.setBounds(notebookMenu.transform as RectTransform);
+        photoNote.LoadImage(photo);
 
         // TODO: remove this debug image
         debugImage.texture = photo;

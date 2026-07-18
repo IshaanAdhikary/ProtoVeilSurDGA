@@ -6,6 +6,7 @@ using UnityEngine;
 /// </summary>
 public class PhotoNote : NotebookItem
 {
+    [SerializeField] private UnityEngine.UI.RawImage displayImage;
     [SerializeField] private List<string> subjectIds = new();
 
     public IReadOnlyList<string> SubjectIds() {
@@ -16,6 +17,11 @@ public class PhotoNote : NotebookItem
         return subjectIds.Contains(subjectId);
     }
 
-    // TODO: add photo-specific code like displaying an image
-    // and validation
+    public void LoadImage(Texture2D content)
+    {
+        displayImage.color = Color.white;
+        displayImage.texture = content;
+    }
+
+    // TODO: add photo-specific code like validation
 }

@@ -74,6 +74,11 @@ public class PlayerStateController : MonoBehaviour
         firstPersonController.enabled = value;
     }
 
+    public GameObject GetNotebookMenu()
+    {
+        return notebookMenu;
+    }
+
     /// <summary>
     /// When toggle notebook button is pressed, either open or close the notebook
     /// depending on if it is already open.
