@@ -12,6 +12,7 @@ public class PlayerStateController : MonoBehaviour
 
     private PlayerControls controls;
     private FirstPersonController firstPersonController;
+    private PhotoCameraController photoCameraController;
 
     private bool notebookOpen = false;
     private bool isCrouching = false;
@@ -22,6 +23,7 @@ public class PlayerStateController : MonoBehaviour
     {
         controls = new PlayerControls();
         firstPersonController = GetComponent<FirstPersonController>();
+        photoCameraController = GetComponent<PhotoCameraController>();
     }
 
     private void Start()
@@ -88,6 +90,11 @@ public class PlayerStateController : MonoBehaviour
         notebookOpen = !notebookOpen;
         notebookMenu.SetActive(notebookOpen);
         SetPlayerHasControl(!notebookOpen);
+
+        if (notebookOpen)
+        {
+            photoCameraController.CancelCamera();
+        }
 
         Cursor.lockState = notebookOpen ? CursorLockMode.None : CursorLockMode.Locked;
         Cursor.visible = notebookOpen;

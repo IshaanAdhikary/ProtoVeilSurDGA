@@ -1,7 +1,6 @@
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.InputSystem;
-using UnityEngine.UI;
 
 /// <summary>
 /// Controls camera zoom, UI, and photo capture logic for
@@ -23,9 +22,6 @@ public class PhotoCameraController : MonoBehaviour
     private GameObject notebookMenu;
     private float targetFOV;
 
-    // TODO: remove this debug image
-    private RawImage debugImage;
-
     private void Awake()
     {
         controls = new PlayerControls();
@@ -39,17 +35,6 @@ public class PhotoCameraController : MonoBehaviour
 
         targetFOV = normalFOV;
         cameraUI.gameObject.SetActive(false);
-
-        // TODO: remove this debug image
-        GameObject debugImageObject = new GameObject("DebugPhotoImage", typeof(RawImage));
-        debugImageObject.transform.SetParent(cameraUI.transform, false);
-        RectTransform debugImageRect = debugImageObject.GetComponent<RectTransform>();
-        debugImageRect.anchorMin = new Vector2(0f, 1f);
-        debugImageRect.anchorMax = new Vector2(0f, 1f);
-        debugImageRect.pivot = new Vector2(0f, 1f);
-        debugImageRect.anchoredPosition = Vector2.zero;
-        debugImageRect.sizeDelta = new Vector2(300f, 300f);
-        debugImage = debugImageObject.GetComponent<RawImage>();
     }
 
     private void OnEnable()
@@ -84,6 +69,11 @@ public class PhotoCameraController : MonoBehaviour
 
     private void OnAimCameraCanceled(InputAction.CallbackContext ctx)
     {
+        CancelCamera();
+    }
+
+    public void CancelCamera()
+    {
         targetFOV = normalFOV;
         cameraUI.gameObject.SetActive(false);
         playerStateController.SetPhotoMode(false);
@@ -109,9 +99,6 @@ public class PhotoCameraController : MonoBehaviour
         {
             photoNote.AddSubject(subjectId);
         }
-
-        // TODO: remove this debug image
-        debugImage.texture = photo;
     }
 
     /// <summary>
