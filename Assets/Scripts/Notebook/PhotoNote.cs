@@ -1,3 +1,4 @@
+using System.Collections.Generic;
 using UnityEngine;
 
 /// <summary>
@@ -5,10 +6,14 @@ using UnityEngine;
 /// </summary>
 public class PhotoNote : NotebookItem
 {
-    [SerializeField] private string subjectId;
+    [SerializeField] private List<string> subjectIds = new();
 
-    public string SubjectId() {
-        return subjectId;
+    public IReadOnlyList<string> SubjectIds() {
+        return subjectIds;
+    }
+
+    public bool HasSubject(string subjectId) {
+        return subjectIds.Contains(subjectId);
     }
 
     // TODO: add photo-specific code like displaying an image
