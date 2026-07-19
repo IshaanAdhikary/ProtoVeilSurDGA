@@ -104,8 +104,8 @@ public class FirstPersonController : MonoBehaviour
     }
 
     /// <summary>
-    /// Move the camera depending on the look input. Rotates the player left and right
-    /// but not up and down, and clamps up and down minimum and maximum.
+    /// Move the camera depending on the look input. Rotates the player object left
+    /// and right but not up and down, and clamps up and down minimum and maximum.
     /// </summary>
     private void HandleLook()
     {

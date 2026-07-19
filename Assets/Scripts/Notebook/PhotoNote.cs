@@ -1,3 +1,4 @@
+using System.Collections.Generic;
 using UnityEngine;
 
 /// <summary>
@@ -5,12 +6,28 @@ using UnityEngine;
 /// </summary>
 public class PhotoNote : NotebookItem
 {
-    [SerializeField] private string subjectId;
+    [SerializeField] private UnityEngine.UI.RawImage displayImage;
+    [SerializeField] private List<string> subjectIds = new();
 
-    public string SubjectId() {
-        return subjectId;
+    public IReadOnlyList<string> SubjectIds() {
+        return subjectIds;
     }
 
-    // TODO: add photo-specific code like displaying an image
-    // and validation
+    public bool HasSubject(string subjectId) {
+        return subjectIds.Contains(subjectId);
+    }
+
+    public void AddSubject(string subjectId) {
+        if (!subjectIds.Contains(subjectId)) {
+            subjectIds.Add(subjectId);
+        }
+    }
+
+    public void LoadImage(Texture2D content)
+    {
+        displayImage.color = Color.white;
+        displayImage.texture = content;
+    }
+
+    // TODO: add photo-specific code like validation
 }

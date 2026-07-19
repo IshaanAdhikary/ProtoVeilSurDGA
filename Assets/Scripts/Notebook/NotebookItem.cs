@@ -6,12 +6,16 @@ using UnityEngine.EventSystems;
 /// item's position within assigned bounds. Concrete note types (e.g.
 /// TextNote, QuestionNote) inherit from this to add their own content.
 /// </summary>
-public abstract class NotebookItem : MonoBehaviour, IBeginDragHandler, IDragHandler, IEndDragHandler
+public abstract class NotebookItem : MonoBehaviour, IBeginDragHandler, IDragHandler, IEndDragHandler, IPointerClickHandler
 {
     [SerializeField] private RectTransform bounds;
     [SerializeField] private StringPin pin;
+    [SerializeField] private float focusScale = 3f;
     private RectTransform rect;
     private Vector2 mousePosition;
+    private bool isFocused;
+    private Vector2 unfocusedAnchoredPosition;
+    private Vector3 unfocusedScale;
 
     public StringPin Pin => pin;
 
@@ -27,6 +31,11 @@ public abstract class NotebookItem : MonoBehaviour, IBeginDragHandler, IDragHand
 
     public void OnDrag(PointerEventData e)
     {
+        if (isFocused)
+        {
+            return;
+        }
+
         mousePosition += e.delta;
         rect.anchoredPosition = ClampToBounds(mousePosition);
     }
@@ -34,6 +43,50 @@ public abstract class NotebookItem : MonoBehaviour, IBeginDragHandler, IDragHand
     public void OnEndDrag(PointerEventData e)
     {
         // Empty for now
+    }
+
+    public void OnPointerClick(PointerEventData e)
+    {
+        if (e.button == PointerEventData.InputButton.Right)
+        {
+            ToggleFocus();
+        }
+    }
+
+    private void ToggleFocus()
+    {
+        if (isFocused)
+        {
+            Unfocus();
+        }
+        else
+        {
+            Focus();
+        }
+    }
+
+    private void Focus()
+    {
+        unfocusedAnchoredPosition = rect.anchoredPosition;
+        unfocusedScale = rect.localScale;
+
+        rect.SetAsLastSibling();
+        rect.anchoredPosition = Vector2.zero;
+        rect.localScale = unfocusedScale * focusScale;
+        // Keep drag updated if focused while dragging
+        mousePosition = rect.anchoredPosition;
+
+        isFocused = true;
+    }
+
+    private void Unfocus()
+    {
+        rect.anchoredPosition = unfocusedAnchoredPosition;
+        rect.localScale = unfocusedScale;
+        // Keep drag updated if focused while dragging
+        mousePosition = rect.anchoredPosition;
+
+        isFocused = false;
     }
 
     private Vector2 ClampToBounds(Vector2 toClamp)
@@ -51,5 +104,10 @@ public abstract class NotebookItem : MonoBehaviour, IBeginDragHandler, IDragHand
         toClamp.y = Mathf.Clamp(toClamp.y, minY, maxY);
 
         return toClamp;
+    }
+
+    public void setBounds(RectTransform newBounds)
+    {
+        bounds = newBounds;
     }
 }
