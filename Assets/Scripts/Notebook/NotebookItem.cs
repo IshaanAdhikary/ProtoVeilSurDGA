@@ -22,7 +22,7 @@ public abstract class NotebookItem : MonoBehaviour, IBeginDragHandler, IDragHand
 
     public void OnBeginDrag(PointerEventData e)
     {
-        // Empty for now
+        mousePosition = rect.anchoredPosition;
     }
 
     public void OnDrag(PointerEventData e)

@@ -119,6 +119,11 @@ NavMeshSettings:
     debug:
       m_Flags: 0
   m_NavMeshData: {fileID: 0}
+--- !u!224 &37210087 stripped
+RectTransform:
+  m_CorrespondingSourceObject: {fileID: 1650597569073416288, guid: 4c99c12b9b4c544f99b32b73a0cbdb08, type: 3}
+  m_PrefabInstance: {fileID: 392360921}
+  m_PrefabAsset: {fileID: 0}
 --- !u!1 &218710811
 GameObject:
   m_ObjectHideFlags: 0
@@ -307,6 +312,14 @@ PrefabInstance:
       propertyPath: m_fontSize
       value: 45.85
       objectReference: {fileID: 0}
+    - target: {fileID: 2921898023941771886, guid: 4c99c12b9b4c544f99b32b73a0cbdb08, type: 3}
+      propertyPath: bounds
+      value: 
+      objectReference: {fileID: 37210087}
+    - target: {fileID: 2921898023941771886, guid: 4c99c12b9b4c544f99b32b73a0cbdb08, type: 3}
+      propertyPath: m_Enabled
+      value: 1
+      objectReference: {fileID: 0}
     - target: {fileID: 3050906081248267595, guid: 4c99c12b9b4c544f99b32b73a0cbdb08, type: 3}
       propertyPath: m_SizeDelta.x
       value: 307
@@ -350,6 +363,14 @@ PrefabInstance:
     - target: {fileID: 4288057873302861738, guid: 4c99c12b9b4c544f99b32b73a0cbdb08, type: 3}
       propertyPath: m_fontSize
       value: 48.5
+      objectReference: {fileID: 0}
+    - target: {fileID: 4290808494779166609, guid: 4c99c12b9b4c544f99b32b73a0cbdb08, type: 3}
+      propertyPath: bounds
+      value: 
+      objectReference: {fileID: 37210087}
+    - target: {fileID: 4290808494779166609, guid: 4c99c12b9b4c544f99b32b73a0cbdb08, type: 3}
+      propertyPath: m_Enabled
+      value: 1
       objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []

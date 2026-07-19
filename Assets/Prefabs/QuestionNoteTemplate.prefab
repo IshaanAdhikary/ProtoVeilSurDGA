@@ -227,7 +227,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: b1f2f87315d96c140b5c45fcede2d8ba, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::QuestionNote
-  bounds: {fileID: 8646716613968662327}
+  bounds: {fileID: 0}
   pin: {fileID: 8072121795072048427}
 --- !u!1 &9019425903215969751
 GameObject:
