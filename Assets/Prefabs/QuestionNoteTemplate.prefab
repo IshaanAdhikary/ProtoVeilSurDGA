@@ -229,6 +229,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::QuestionNote
   bounds: {fileID: 0}
   pin: {fileID: 2189701845555673177}
+  focusScale: 3
   rule: {fileID: 0}
 --- !u!1 &9019425903215969751
 GameObject:

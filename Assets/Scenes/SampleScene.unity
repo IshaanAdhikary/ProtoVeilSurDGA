@@ -1649,7 +1649,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 7d1337db1cab35e48aec927194c80c66, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::PlayerStateController
-  notebookMenu: {fileID: 1415445139}
+  notebookMenu: {fileID: 538897431}
 --- !u!114 &1610540351
 MonoBehaviour:
   m_ObjectHideFlags: 0

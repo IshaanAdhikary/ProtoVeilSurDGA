@@ -92,6 +92,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::PhotoNote
   bounds: {fileID: 0}
   pin: {fileID: 3877514351890701960}
+  focusScale: 3
   displayImage: {fileID: 6330567908150446596}
   subjectIds: []
 --- !u!1 &3467918016606398289
