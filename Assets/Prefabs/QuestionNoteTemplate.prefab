@@ -170,7 +170,6 @@ RectTransform:
   m_Children:
   - {fileID: 85733650898607842}
   - {fileID: 4829867298104028606}
-  - {fileID: 112296646840105637}
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0.5, y: 0.5}
@@ -229,7 +228,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::QuestionNote
   bounds: {fileID: 8646716613968662327}
-  pin: {fileID: 0}
+  pin: {fileID: 8072121795072048427}
 --- !u!1 &8804984525236318393
 GameObject:
   m_ObjectHideFlags: 0
@@ -260,11 +259,11 @@ RectTransform:
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
-  m_Father: {fileID: 8646716613968662327}
+  m_Father: {fileID: 4829867298104028606}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0.5, y: 0.5}
   m_AnchorMax: {x: 0.5, y: 0.5}
-  m_AnchoredPosition: {x: 2.017, y: 102.02}
+  m_AnchoredPosition: {x: 2.017, y: 2.0200043}
   m_SizeDelta: {x: 29.034, y: 29.0342}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!222 &9058189967282662503
@@ -335,7 +334,8 @@ RectTransform:
   m_LocalPosition: {x: 0, y: 0, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
-  m_Children: []
+  m_Children:
+  - {fileID: 112296646840105637}
   m_Father: {fileID: 8646716613968662327}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0.5, y: 1}
@@ -393,7 +393,4 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 6c1bca70db81b754b9d0e59d9a33a3ed, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::StringPin
-  canvas: {fileID: 0}
-  temporaryLine: {fileID: 0}
-  connectionsParent: {fileID: 0}
-  linePrefab: {fileID: 0}
+  line: {fileID: 112296646840105637}
