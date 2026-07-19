@@ -6,8 +6,9 @@ public class StringPin : MonoBehaviour,
     IDragHandler,
     IEndDragHandler
 {
-
-    [SerializeField] private RectTransform line;
+    private RectTransform line;
+    [SerializeField] private RectTransform stringPrefab;
+    [SerializeField] private RectTransform stringParent;
     private StringPin connectedPin;
 
     private void Awake()
@@ -16,7 +17,14 @@ public class StringPin : MonoBehaviour,
 
     public void OnBeginDrag(PointerEventData eventData)
     {
+        if (line!=null)
+        {
+            Destroy(line.gameObject);
+            connectedPin = null;
+        }
+        line = Instantiate(stringPrefab, stringParent);
         line.gameObject.SetActive(true);
+        line.SetAsLastSibling();
         UpdateLine(eventData.position);
     }
 
@@ -27,26 +35,64 @@ public class StringPin : MonoBehaviour,
 
     public void OnEndDrag(PointerEventData eventData)
     {
+        foreach (var result in eventData.hovered)
+        {
+            StringPin pin = result.GetComponent<StringPin>();
+            if (pin != null && pin != this)
+            {
+                connectedPin = pin;
+                connectedPin.SetConnectedPin(this);
+                UpdateLine(pin.transform.position);
+                return;
+            }
+        }
+        connectedPin = null;
         line.gameObject.SetActive(false);
     }
 
-    void UpdateLine(Vector2 end)
+   void UpdateLine(Vector2 end)
     {
-        Vector2 start = ((RectTransform)transform).position;
+        RectTransform pinRect = (RectTransform)transform;
 
-        Vector2 dir = end - start;
-        float distance = dir.magnitude;
+        Vector2 pinPosition = pinRect.position;
+        Vector2 direction = (end - pinPosition).normalized;
+        float pinRadius = Mathf.Max(pinRect.rect.width, pinRect.rect.height) / 2f;
 
+        Vector2 start = pinPosition + direction * pinRadius;
+
+        Vector2 lineDirection = end - start;
+        float distance = lineDirection.magnitude;
         line.position = start;
-        line.sizeDelta = new Vector2(distance, line.sizeDelta.y);
 
-        float angle = Mathf.Atan2(dir.y, dir.x) * Mathf.Rad2Deg;
-        line.rotation = Quaternion.Euler(0, 0, angle);
+        line.rotation = Quaternion.FromToRotation(
+            Vector3.right,
+            lineDirection
+        );
+
+        line.sizeDelta = new Vector2(
+            distance,
+            line.sizeDelta.y
+        );
     }
 
     // If it has a connected pin, returns that pin; else, returns self
-    public StringPin GetConnected()
+    public StringPin GetConnectedPin()
     {
         return connectedPin == null ? this : connectedPin;
+    }
+
+    public RectTransform GetLine()
+    {
+        return line;
+    }
+
+    public void SetConnectedPin(StringPin newPin)
+    {
+        connectedPin = newPin;
+        if (line!=null)
+        {
+            Destroy(line.gameObject);
+        }
+        line = newPin.GetLine();
     }
 }
