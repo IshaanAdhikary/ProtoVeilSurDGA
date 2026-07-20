@@ -1,6 +1,7 @@
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.InputSystem;
+using UnityEngine.UI;
 
 /// <summary>
 /// Controls camera zoom, UI, and photo capture logic for
@@ -21,12 +22,13 @@ public class PhotoCameraController : MonoBehaviour
     private PlayerStateController playerStateController;
     private GameObject notebookMenu;
     private float targetFOV;
-
+    [SerializeField] private Image snapOverlay;
     private void Awake()
     {
         controls = new PlayerControls();
         playerStateController = GetComponent<PlayerStateController>();
         notebookMenu = playerStateController.GetNotebookMenu();
+        snapOverlay.canvasRenderer.SetAlpha(0f);
 
         if (targetCamera == null)
         {
@@ -65,6 +67,7 @@ public class PhotoCameraController : MonoBehaviour
         targetFOV = zoomedFOV;
         cameraUI.gameObject.SetActive(true);
         playerStateController.SetPhotoMode(true);
+        snapOverlay.CrossFadeAlpha(0f, 0f, true); //cancel prev fade if still running
     }
 
     private void OnAimCameraCanceled(InputAction.CallbackContext ctx)
@@ -89,6 +92,10 @@ public class PhotoCameraController : MonoBehaviour
         RenderTexture captureRT = RenderTexture.GetTemporary(Screen.width, Screen.height, 24);
         Texture2D photo = CapturePhoto(captureRT);
         RenderTexture.ReleaseTemporary(captureRT);
+
+        //puts white  overlay over and then fades it out to simulate a camera snap
+        snapOverlay.canvasRenderer.SetAlpha(.5f);
+        snapOverlay.CrossFadeAlpha(0f, 0.2f, ignoreTimeScale: true);
 
         List<string> subjectIds = DetectPhotographedSubjects();
         GameObject photograph = Instantiate(photographPrefab, notebookMenu.transform);
