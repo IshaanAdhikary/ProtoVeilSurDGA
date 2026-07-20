@@ -8,7 +8,6 @@ public class StringPin : MonoBehaviour,
 {
     private RectTransform line;
     [SerializeField] private RectTransform stringPrefab;
-    [SerializeField] private RectTransform stringParent;
     private StringPin connectedPin;
 
     private void Awake()
@@ -22,7 +21,7 @@ public class StringPin : MonoBehaviour,
             Destroy(line.gameObject);
             connectedPin = null;
         }
-        line = Instantiate(stringPrefab, stringParent);
+        line = Instantiate(stringPrefab, transform.parent);
         line.gameObject.SetActive(true);
         line.SetAsLastSibling();
         UpdateLine(eventData.position);

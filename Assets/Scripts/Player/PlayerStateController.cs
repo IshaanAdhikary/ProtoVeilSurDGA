@@ -5,20 +5,25 @@ using UnityEngine.InputSystem;
 /// Tracks player state shared across systems (crouching, notebook open/closed)
 /// and player functions like opening notebook.
 /// </summary>
+[RequireComponent(typeof(FirstPersonController))]
 public class PlayerStateController : MonoBehaviour
 {
     [SerializeField] private GameObject notebookMenu;
 
     private PlayerControls controls;
     private FirstPersonController firstPersonController;
+    private PhotoCameraController photoCameraController;
 
     private bool notebookOpen = false;
     private bool isCrouching = false;
+    private bool inPhotoMode = false;
+    private bool playerHasControl = true;
 
     private void Awake()
     {
         controls = new PlayerControls();
         firstPersonController = GetComponent<FirstPersonController>();
+        photoCameraController = GetComponent<PhotoCameraController>();
     }
 
     private void Start()
@@ -50,6 +55,32 @@ public class PlayerStateController : MonoBehaviour
         isCrouching = value;
     }
 
+    public bool GetPhotoMode()
+    {
+        return inPhotoMode;
+    }
+
+    public void SetPhotoMode(bool value)
+    {
+        inPhotoMode = value;
+    }
+
+    public bool GetPlayerHasControl()
+    {
+        return playerHasControl;
+    }
+
+    public void SetPlayerHasControl(bool value)
+    {
+        playerHasControl = value;
+        firstPersonController.enabled = value;
+    }
+
+    public GameObject GetNotebookMenu()
+    {
+        return notebookMenu;
+    }
+
     /// <summary>
     /// When toggle notebook button is pressed, either open or close the notebook
     /// depending on if it is already open.
@@ -58,7 +89,12 @@ public class PlayerStateController : MonoBehaviour
     {
         notebookOpen = !notebookOpen;
         notebookMenu.SetActive(notebookOpen);
-        firstPersonController.enabled = !notebookOpen;
+        SetPlayerHasControl(!notebookOpen);
+
+        if (notebookOpen)
+        {
+            photoCameraController.CancelCamera();
+        }
 
         Cursor.lockState = notebookOpen ? CursorLockMode.None : CursorLockMode.Locked;
         Cursor.visible = notebookOpen;
