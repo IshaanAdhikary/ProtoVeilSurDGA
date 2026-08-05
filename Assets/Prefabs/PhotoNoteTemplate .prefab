@@ -255,3 +255,5 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 6c1bca70db81b754b9d0e59d9a33a3ed, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::StringPin
+  stringPrefab: {fileID: 3614998634466560459, guid: 5efa432215d074677a375dc1d2d9a549, type: 3}
+  stringParent: {fileID: 0}
